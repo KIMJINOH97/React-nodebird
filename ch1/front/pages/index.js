@@ -1,20 +1,32 @@
 import React from 'react'; // next에선 원래 안써도 됨
-import Link from 'next/link';
-import Head from 'next/head';
-import AppLayout from '../components/AppLayout';
+import PostCard from '../components/PostCard';
+import PostForm from '../components/PostForm';
+
+const dummy = {
+    isLoggedIn: true,
+    imagePaths: [],
+    mainPosts: [
+        {
+            User: {
+                id: 1,
+                nickname: '제로초',
+            },
+            content: '첫 번째 게시글',
+            img: '',
+        },
+    ],
+};
 
 const Home = () => {
     // hooks 문법
     return (
         <>
-            <Head>
-                <title>Node bird</title>
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.css" />
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.js" />
-            </Head>
-            <AppLayout>
-                <div>Hello, Next!</div>
-            </AppLayout>
+            <div>
+                {dummy.isLoggedIn && <PostForm />}
+                {dummy.mainPosts.map((c) => {
+                    return <PostCard key={c} post={c} />;
+                })}
+            </div>
         </>
     );
 };
