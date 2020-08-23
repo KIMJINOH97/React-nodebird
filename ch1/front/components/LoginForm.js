@@ -1,14 +1,19 @@
 import React, { useState, useCallback } from 'react';
 import { Form, Input, Button } from 'antd';
 import Link from 'next/link';
+import { useDispatch } from 'react-redux';
 import { useInput } from '../pages/signup';
+import { loginAction } from '../reducers/user';
 
 const LoginForm = () => {
     const [id, onChangeId] = useInput(''); // signup의 커스텀 훅 재사용
     const [password, onChangePassword] = useInput('');
+    const dispatch = useDispatch(); // 데이터 확인용
+
     const onSubmitForm = useCallback((e) => {
         // 자식 컴포넌트로 넣어주는 것은 무조건 useCallback으로 감싸준다.
         e.preventDefault;
+        dispatch(loginAction);
         console.log({
             id,
             password,

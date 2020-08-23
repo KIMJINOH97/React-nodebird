@@ -1,22 +1,24 @@
 import React from 'react';
 import { Form, Input, Button } from 'antd';
+import { useSelector } from 'react-redux';
 
-const dummy = {
-    isLoggedIn: true,
-    imagePaths: [],
-    mainPosts: [
-        {
-            User: {
-                id: 1,
-                nickname: '제로초',
-            },
-            content: '첫 번째 게시글',
-            img: '',
-        },
-    ],
-};
+// const dummy = {
+//     isLoggedIn: true,
+//     imagePaths: [],
+//     mainPosts: [
+//         {
+//             User: {
+//                 id: 1,
+//                 nickname: '제로초',
+//             },
+//             content: '첫 번째 게시글',
+//             img: '',
+//         },
+//     ],
+// };
 
 const PostForm = () => {
+    const { mainPosts } = useSelector((state) => state.post);
     return (
         // 이미지 업로드 해야하기 때문에 encType은 multipart임
         // style넣을 때는 객체 형식으로 {{ 넣어야함 }}
@@ -29,7 +31,7 @@ const PostForm = () => {
                 </Button>
             </div>
             <div>
-                {dummy.imagePaths.map((v, i) => {
+                {mainPosts.map((v, i) => {
                     // 반복문
                     return (
                         <div key={v} style={{ display: 'inline-block' }}>

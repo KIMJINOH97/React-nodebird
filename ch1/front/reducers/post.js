@@ -1,7 +1,15 @@
-export const { default: PostCard } = require('../components/PostCard');
-
-const initialState = {
-    mainPosts: [],
+export const initialState = {
+    mainPosts: [
+        {
+            User: {
+                id: 1,
+                nickname: '제로초',
+            },
+            content: '첫 번째 게시글',
+            img: '',
+        },
+    ],
+    imagePath: [],
 };
 
 const ADD_POST = 'ADD_POST';

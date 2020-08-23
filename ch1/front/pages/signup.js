@@ -1,6 +1,8 @@
 import React, { useState, useCallback, memo } from 'react'; // useCallback으로 evnetlistener들을 감싸준다
 import { Button, Form, Input, Checkbox } from 'antd';
 import PropTypes from 'prop-types';
+import { signUpAction } from '../reducers/user';
+import { useDispatch } from 'react-redux';
 
 export const useInput = (initValue = null) => {
     // 커스텀 훅!
@@ -34,6 +36,7 @@ const Signup = () => {
     const [passwordError, setPasswordError] = useState(false);
     const [termError, setTermError] = useState(false);
 
+    const dispatch = useDispatch();
     const onSubmit = useCallback(
         (e) => {
             console.log('Submit!!!');
@@ -45,6 +48,13 @@ const Signup = () => {
                 alert('약관에 동의 하셔야 합니다');
                 return setTermError(true);
             }
+            dispatch(
+                signUpAction({
+                    id,
+                    password,
+                    nick,
+                })
+            );
         },
         [password, passwordCheck, term]
     ); // useCallback을 쓰면 dependancy들도 넣어 줘야한다. 어떤 것들이 쓰이는 지
@@ -80,6 +90,7 @@ const Signup = () => {
 
     return (
         // onSubmit > onFinish로 변경됨 antd 문법
+        // 폼같은 경우에는 react state 쓰는게 좋음.
         <>
             <Form onFinish={onSubmit} style={{ padding: 10 }}>
                 <div>
