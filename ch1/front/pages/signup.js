@@ -1,8 +1,9 @@
-import React, { useState, useCallback, memo } from 'react'; // useCallback으로 evnetlistener들을 감싸준다
+import React, { useState, useCallback, memo, useEffect } from 'react'; // useCallback으로 evnetlistener들을 감싸준다
 import { Button, Form, Input, Checkbox } from 'antd';
 import PropTypes from 'prop-types';
-import { signUpAction } from '../reducers/user';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import Router from 'next/router';
+import { SIGN_UP_REQUEST } from '../reducers/user';
 
 export const useInput = (initValue = null) => {
     // 커스텀 훅!
@@ -36,7 +37,18 @@ const Signup = () => {
     const [passwordError, setPasswordError] = useState(false);
     const [termError, setTermError] = useState(false);
 
+    const { isSigningUp, me } = useSelector((state) => state.user);
+
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        // 로그인 누르면 작동
+        if (me) {
+            alert('로그인 했으니 메인페이지로 이동합니다.');
+            Router.push('/');
+        }
+    }, [me && me.id]);
+
     const onSubmit = useCallback(
         (e) => {
             console.log('Submit!!!');
@@ -48,13 +60,15 @@ const Signup = () => {
                 alert('약관에 동의 하셔야 합니다');
                 return setTermError(true);
             }
-            dispatch(
-                signUpAction({
+            dispatch({
+                type: SIGN_UP_REQUEST,
+                data: {
                     id,
                     password,
                     nick,
-                })
-            );
+                },
+            });
+            console.log(id, password, nick);
         },
         [password, passwordCheck, term]
     ); // useCallback을 쓰면 dependancy들도 넣어 줘야한다. 어떤 것들이 쓰이는 지
@@ -121,7 +135,7 @@ const Signup = () => {
                     {termError && <div style={{ color: 'red' }}> 약관에 동의하셔야 합니다.</div>}
                 </div>
                 <div style={{ marginTop: 10 }}>
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" loading={isSigningUp}>
                         가입하기
                     </Button>
                 </div>
