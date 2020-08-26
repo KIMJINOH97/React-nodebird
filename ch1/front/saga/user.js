@@ -47,15 +47,16 @@ function* watchHello() {
     });
 }
 
-function signUpAPI() {
+function signUpAPI(signUpdata) {
     // 서버요청
-    return axios.post('/login');
+    return axios.post('http://localhost:3065/api/user/', signUpdata);
 }
 
-function* signUp() {
+function* signUp(action) {
+    // action에 id password nick이 들어있음
     try {
-        // yield call(signUpAPI); // 서버요청 보냄
-        yield delay(2000);
+        yield call(signUpAPI, action.data); // 서버요청 보냄, 두번째는 인자signUpAPI의 인자로 전달.
+        //yield delay(2000);
         //throw new Error('에러임');
         yield put({
             type: SIGN_UP_SUCCESS,

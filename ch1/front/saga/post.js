@@ -32,6 +32,7 @@ function* addComment(action) {
     // request에대한 action
     try {
         yield delay(2000);
+        console.log('기다려기다려기다려', action.data.postId);
         yield put({
             type: ADD_COMMENT_SUCCESS,
             data: {
@@ -39,6 +40,7 @@ function* addComment(action) {
             },
         });
     } catch (e) {
+        console.error(e);
         yield put({
             type: ADD_COMMENT_FAILURE,
             error: e,

@@ -63,14 +63,14 @@ const Signup = () => {
             dispatch({
                 type: SIGN_UP_REQUEST,
                 data: {
-                    id,
+                    userId: id,
                     password,
-                    nick,
+                    nickname: nick,
                 },
             });
             console.log(id, password, nick);
         },
-        [password, passwordCheck, term]
+        [id, nick, password, passwordCheck, term]
     ); // useCallback을 쓰면 dependancy들도 넣어 줘야한다. 어떤 것들이 쓰이는 지
 
     // antd component안에 들어가는 함수들은 useCallback으로 감싸줘야한다.

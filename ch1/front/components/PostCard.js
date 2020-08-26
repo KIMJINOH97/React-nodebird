@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Button, Card, Avatar, Popover, Input, Form, List, Comment } from 'antd';
 import { RetweetOutlined, HeartTwoTone, HeartOutlined, MessageOutlined, EllipsisOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
@@ -9,13 +9,13 @@ const PostCard = ({ post }) => {
     const [commentFormOpened, setCommentFormOpened] = useState(false);
     const [commentText, setCommentText] = useState('');
     const { me } = useSelector((state) => state.user);
-    const { isAddingComment } = useSelector((state) => state.post);
+    const { isAddingComment, commentAdded } = useSelector((state) => state.post);
     const dispatch = useDispatch();
 
     const onToggleComment = useCallback(() => {
         setCommentFormOpened((prev) => !prev);
     });
-
+    console.log(post.id);
     const onSubmitComment = useCallback(
         (e) => {
             e.preventDefault;
@@ -34,6 +34,10 @@ const PostCard = ({ post }) => {
         [me && me.id]
     ); // 객체의 값을 넣우주도록 비교때메 에러나기가 쉬움.
     // 처음의 me를 기억해 null상태를 기억함.
+
+    useEffect(() => {
+        setCommentText('');
+    }, [commentAdded == true]);
 
     const onChangeCommentText = useCallback((e) => {
         e.preventDefault;
@@ -83,14 +87,13 @@ const PostCard = ({ post }) => {
                     <List
                         header={`${post.Comments ? post.Comments.length : 0} 댓글`}
                         itemLayout="horizontal"
-                        dataSource={post.Comment || []}
+                        dataSource={post.Comments || []}
                         renderItem={(item) => (
                             <li>
                                 <Comment
                                     author={item.User.nickname}
                                     avatar={<Avatar>{item.User.nickname}</Avatar>}
                                     content={item.content}
-                                    datetime={item.createdAt}
                                 />
                             </li>
                         )}

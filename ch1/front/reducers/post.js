@@ -8,6 +8,7 @@ export const initialState = {
             },
             content: '첫 번째 게시글',
             img: '',
+            Comments: [],
         }, // 화면의 포스트 들
     ],
     imagePath: [], // 미리보기 이미지 경로
@@ -112,8 +113,8 @@ const reducer = (state = initialState, action) => {
         }
         case ADD_COMMENT_SUCCESS: {
             const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
-            // 성공에 대한 action
-            const post = state.mainPosts[postIndex];
+            // 성공에 대한 action.data.postId로 게시글 위치를 찾음
+            const post = state.mainPosts[postIndex]; // 찾은 위치로 게시글 선택
             const Comments = [...post.Comments, dummyComment];
             const mainPosts = [...state.mainPosts]; // 모든 것은 불변성때문임.
             mainPosts[postIndex] = { ...post, Comments };
