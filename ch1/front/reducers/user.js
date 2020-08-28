@@ -12,7 +12,7 @@ const dummyUser = {
 
 export const initialState = {
     // 초기 값 , 리액트의 state라 보면 됨
-    isLoggedIn: false, // 로그인 여부
+    // isLoggedIn: false, // 로그인 여부 me가 있다는것은 로그인 되었다는 뜻
     isLoggingOut: false, // 로그아웃 시도중
     isLoggingIn: false, // 로그인 시도중
     loginErrorReason: '', // 로그인 에러 사유
@@ -96,8 +96,7 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 isLoggingIn: false,
-                isLoggedIn: true,
-                me: dummyUser,
+                me: action.data,
                 isLoading: false,
             };
         }
@@ -105,7 +104,6 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 isLoggingIn: false,
-                isLoggedIn: false,
                 loginErrorReason: action.error,
                 me: null,
             };
@@ -113,7 +111,19 @@ const reducer = (state = initialState, action) => {
         case LOG_OUT_REQUEST: {
             return {
                 ...state, // 스프레드 문법: 새로운 객체나 배열을 생성하는 문법 매번 다 쓰고 있음
-                isLoggedIn: false,
+                isLoggingOut: true,
+            };
+        }
+        case LOG_OUT_SUCCESS: {
+            return {
+                ...state, // 스프레드 문법: 새로운 객체나 배열을 생성하는 문법 매번 다 쓰고 있음
+                isLoggingOut: false,
+                me: null,
+            };
+        }
+        case LOG_OUT_FAILURE: {
+            return {
+                ...state, // 스프레드 문법: 새로운 객체나 배열을 생성하는 문법 매번 다 쓰고 있음
                 me: null,
             };
         }
@@ -137,6 +147,22 @@ const reducer = (state = initialState, action) => {
                 signedUp: false, // 회원가입 여부
                 isSigningUp: false, // 회원가입 시도중
                 signUpErrorReason: action.error, // 회원가입 실패 사유
+            };
+        }
+        case LOAD_USER_REQUEST: {
+            return {
+                ...state, // 스프레드 문법: 새로운 객체나 배열을 생성하는 문법 매번 다 쓰고 있음
+            };
+        }
+        case LOAD_USER_SUCCESS: {
+            return {
+                ...state, // 스프레드 문법: 새로운 객체나 배열을 생성하는 문법 매번 다 쓰고 있음
+                me: action.data,
+            };
+        }
+        case LOAD_USER_FAILURE: {
+            return {
+                ...state, // 스프레드 문법: 새로운 객체나 배열을 생성하는 문법 매번 다 쓰고 있음
             };
         }
         default: {

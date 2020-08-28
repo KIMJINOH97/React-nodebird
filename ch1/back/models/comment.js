@@ -16,4 +16,5 @@ module.exports = (sequelize, DataTypes) => {
         db.Comment.belongsTo(db.Post);
         db.Comment.belongsTo(db.User);
     };
+    return Comment;
 };

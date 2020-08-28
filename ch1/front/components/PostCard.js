@@ -16,6 +16,7 @@ const PostCard = ({ post }) => {
         setCommentFormOpened((prev) => !prev);
     });
     console.log(post.id);
+    console.log('포스ㅍ트', post);
     const onSubmitComment = useCallback(
         (e) => {
             e.preventDefault;

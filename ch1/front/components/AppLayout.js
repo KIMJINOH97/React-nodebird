@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, Input, Button, Row, Col, Card, Avatar, Form } from 'antd';
 import Proptypes from 'prop-types';
 import LoginForm from './LoginForm';
 import UserProfile from './UserProfile';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { LOAD_USER_REQUEST } from '../reducers/user';
 
 // const dummy = {
 //     // 이 데이터를 통해 front end 는 back end가 완성되지 않아도 코드를 확인 할 수 있다.
@@ -16,7 +17,18 @@ import { useSelector } from 'react-redux';
 // };
 
 const AppLayout = ({ children }) => {
-    const { isLoggedIn } = useSelector((state) => state.user);
+    const { isLoggedIn, me } = useSelector((state) => state.user);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        // 어디서든 로그아웃 가능하므로
+        if (!me) {
+            dispatch({
+                type: LOAD_USER_REQUEST,
+            });
+        }
+    }, []);
+
     return (
         // link 안 a테그 넣어줘야함 , gutter는 Row간의 간격
         <div>
@@ -43,7 +55,7 @@ const AppLayout = ({ children }) => {
             <Row gutter={10}>
                 {/*얘네들 간의 간격 벌려줌*/}
                 <Col xs={24} md={6}>
-                    {isLoggedIn ? ( //3항 연산자 로그인 하면 폼 보여주고 아니면 밑에꺼
+                    {me ? ( //3항 연산자 로그인 하면 폼 보여주고 아니면 밑에꺼
                         <UserProfile />
                     ) : (
                         <LoginForm></LoginForm>

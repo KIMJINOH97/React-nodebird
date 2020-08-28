@@ -95,7 +95,7 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 isAddingPost: false,
                 postAdded: true,
-                mainPosts: [dummyPost, ...state.mainPosts], // 더미 포스트가 기존 포스터 앞에 들어감
+                mainPosts: [action.data, ...state.mainPosts], // 더미 포스트가 기존 포스터 앞에 들어감
             };
         }
         case ADD_POST_FAILURE: {
@@ -131,6 +131,23 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 commentAdded: false,
                 addCommentError: action.error,
+            };
+        }
+        case LOAD_MAIN_POSTS_REQUEST: {
+            return {
+                ...state,
+                mainPosts: [],
+            };
+        }
+        case LOAD_MAIN_POSTS_SUCCESS: {
+            return {
+                ...state,
+                mainPosts: action.data, // 더미 포스트가 기존 포스터 앞에 들어감
+            };
+        }
+        case LOAD_MAIN_POSTS_FAILURE: {
+            return {
+                ...state,
             };
         }
         default: {

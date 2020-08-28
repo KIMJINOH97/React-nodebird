@@ -24,11 +24,11 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     User.associate = (db) => {
-        db.User.hasMany(db.Post, { as: 'Post' }); // 사람 한 명이 여러 게시글을 쓸 수 있다. as도 중요하다. 값을 가져올 때 참고 하므로
+        db.User.hasMany(db.Post); // 사람 한 명이 여러 게시글을 쓸 수 있다. as도 중요하다. 값을 가져올 때 참고 하므로
         db.User.hasMany(db.Comment); // 사람 한 명이 여러 댓글을 쓸 수 있다.
         db.User.belongsToMany(db.Post, { through: 'Like', as: 'Liked' }); // 좋아요한 사람들 목록을 가지고 싶다. 하면 as를 따라 가져옴
-        db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followers' });
-        db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followings' });
+        db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followers', foreignKey: 'followingId' }); // foreignKEy는 다대다 관계만
+        db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followings', foreignKey: 'followerId' });
     };
 
     return User;

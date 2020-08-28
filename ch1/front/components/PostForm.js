@@ -20,6 +20,7 @@ import { ADD_POST_REQUEST } from '../reducers/post';
 
 const PostForm = () => {
     const { imagePath, isAddingPost, postAdded } = useSelector((state) => state.post);
+    const { me } = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const [text, setText] = useState('');
 
@@ -31,22 +32,26 @@ const PostForm = () => {
         setText(e.target.value);
     }, []);
 
-    const onSubmitForm = useCallback((e) => {
-        e.preventDefault; // 페이지 안 넘어가게끔 해줌
-        console.log('post 요청했어!!');
-        dispatch({
-            type: ADD_POST_REQUEST,
-            data: {
-                text,
-            },
-        });
-    }, []);
+    const onSubmitForm = useCallback(
+        (e) => {
+            e.preventDefault; // 페이지 안 넘어가게끔 해줌
+            console.log('post 요청했어!!');
+            dispatch({
+                type: ADD_POST_REQUEST,
+                data: {
+                    content: text,
+                    user: me,
+                },
+            });
+        },
+        [text]
+    ); // userCallback은 기억력이 강력해서 [] 안에 넣어줘야 변동사항이 저장됨.
 
     return (
         // 이미지 업로드 해야하기 때문에 encType은 multipart임
         // style넣을 때는 객체 형식으로 {{ 넣어야함 }}
         <Form encType="multipart/form-data" style={{ margin: '10px 0px 20px' }} onFinish={onSubmitForm}>
-            <Input.TextArea maxLength={140} placeholder="어떤 신기한 일이 잇었나요" value={text} onChange={onChangeText} />
+            <Input.TextArea maxLength={140} placeholder="어떤 신기한 일이 있었나요" value={text} onChange={onChangeText} />
             <div>
                 <Button>이미지 업로드</Button>
                 <Button type="primary" style={{ float: 'right' }} htmlType="submit" loading={isAddingPost}>

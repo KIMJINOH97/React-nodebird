@@ -9,7 +9,7 @@ const LoginForm = () => {
     const [id, onChangeId] = useInput(''); // signup의 커스텀 훅 재사용
     const [password, onChangePassword] = useInput('');
     const dispatch = useDispatch(); // 데이터 확인용
-    const { isLoggingIn } = useSelector((state) => state.user); // 로딩 중인지?
+    const { me } = useSelector((state) => state.user); // 로딩 중인지?
 
     const onSubmitForm = useCallback((e) => {
         // 자식 컴포넌트로 넣어주는 것은 무조건 useCallback으로 감싸준다.
@@ -17,7 +17,7 @@ const LoginForm = () => {
         dispatch({
             type: LOG_IN_REQUEST,
             data: {
-                id,
+                userId: id,
                 password,
             },
         });
@@ -38,7 +38,7 @@ const LoginForm = () => {
                 <Input name="user-password" value={password} required onChange={onChangePassword} type="password"></Input>
             </div>
             <div style={{ marginTop: '10px' }}>
-                <Button type="primary" htmlType="submit" loading={isLoggingIn}>
+                <Button type="primary" htmlType="submit">
                     로그인
                 </Button>
                 <Link href="/signup">

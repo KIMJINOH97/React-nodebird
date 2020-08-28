@@ -1,29 +1,45 @@
 import { all, fork, takeLatest, takeEvery, call, put, take, delay } from 'redux-saga/effects';
-import { LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_IN_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE } from '../reducers/user';
+import {
+    LOG_IN_REQUEST,
+    LOG_IN_SUCCESS,
+    LOG_IN_FAILURE,
+    SIGN_UP_REQUEST,
+    SIGN_UP_SUCCESS,
+    SIGN_UP_FAILURE,
+    LOG_OUT_REQUEST,
+    LOG_OUT_FAILURE,
+    LOG_OUT_SUCCESS,
+    LOAD_USER_REQUEST,
+    LOAD_USER_FAILURE,
+    LOAD_USER_SUCCESS,
+} from '../reducers/user';
 import axios from 'axios';
 
-function loginAPI() {
+function loginAPI(logindata) {
     // 서버에 요청을 보내는 동작
-    return axios.post('/login');
+    return axios.post('/user/login', logindata, {
+        withCredentials: true, // 쿠키를 주고 받을 수 있다 서버에서도 설정해야함 cors가 담당.
+    }); // 3번째 axios 설정 할 수 있다.
 }
 
-function* login() {
+function* login(action) {
     // 제너레이터는 async await보다 할 수 있는것이 많다.
     // try, catch 는 실패할 수 있는 코드에서 보호하기 위해 사용.
     try {
         // 로그인 함수가 동작하면 서버에 먼저 요청을 보내고
         // yield fork(logger); // logger는 내 기록을 로깅하는 함수, 10초걸림.
         // 만약 call로 하면 10초 기다렸다가 밑의 함수 실행. 이런 경우는 fork씀.
-        // yield call(loginAPI); // fork를 하면 서버 요청을 보내고 신경 안쓴 뒤 put을 한다.
+        const result = yield call(loginAPI, action.data); // fork를 하면 서버 요청을 보내고 신경 안쓴 뒤 put을 한다.
         // fork는 문제가 생긴다. call일 때는 loginAPI가 오류나면 error로 넘어가 오류처리.
-        yield delay(1000);
+        // yield delay(1000);
         yield put({
             // 성공하면 이 부분 동작한다.
             type: LOG_IN_SUCCESS,
+            data: result.data, // 정보를 서버로부터 받아옴.
         });
+        // 사용자 정보는 서버의 세션에, 프론트에는 세션을 조회할 수 있는 쿠키를 전달한다.
     } catch (e) {
         // loginAPI 실패
-        console.log('adsfj');
         console.error(e);
         yield put({
             type: LOG_IN_FAILURE,
@@ -49,7 +65,7 @@ function* watchHello() {
 
 function signUpAPI(signUpdata) {
     // 서버요청
-    return axios.post('http://localhost:3065/api/user/', signUpdata);
+    return axios.post('/user/', signUpdata);
 }
 
 function* signUp(action) {
@@ -70,12 +86,69 @@ function* signUp(action) {
     }
 }
 
+function logoutAPI() {
+    // 로그아웃은 data 필요 x 쿠키만 보내주면됨
+    return axios.post(
+        '/user/logout',
+        {},
+        {
+            withCredentials: true, // 쿠키 보내기 위함.
+        }
+    );
+}
+
 function* watchSignUp() {
     yield takeEvery(SIGN_UP_REQUEST, signUp);
 }
 
+function* logout() {
+    try {
+        yield call(logoutAPI);
+        yield put({
+            type: LOG_OUT_SUCCESS,
+        });
+    } catch (e) {
+        console.error(e);
+        yield put({
+            type: LOG_OUT_FAILURE,
+            error: e,
+        });
+    }
+}
+
+function* watchLogout() {
+    yield takeEvery(LOG_OUT_REQUEST, logout);
+}
+
+function loaduserAPI() {
+    return axios.get('/user/', {
+        withCredentials: true,
+    });
+}
+
+function* loaduser(action) {
+    try {
+        console.log('시발시발', action.data);
+        const result = yield call(loaduserAPI, action.data);
+        yield put({
+            type: LOAD_USER_SUCCESS,
+            data: result.data,
+        });
+    } catch (e) {
+        console.error(e);
+        yield put({
+            type: LOAD_USER_FAILURE,
+            error: e,
+        });
+    }
+}
+
+function* watchLoadUser() {
+    yield takeEvery(LOAD_USER_REQUEST, loaduser);
+}
+
 export default function* userSaga() {
-    yield all([fork(watchLogin), fork(watchSignUp)]); // 시작점
+    yield all([fork(watchLogin), fork(watchSignUp), fork(watchLogout), fork(watchLoadUser)]); // 시작점
     // all은 여러 이펙트를 동시에 실행 할 수 있게끔함.
     // fork, call 비슷함. 공통점: 기본적으로 함수를 실행함
     // call은 동기호출, fork는 비동기 호출임. fork는 비동기라 동시 실행 가능.
